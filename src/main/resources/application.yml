@@ -1,0 +1,18 @@
+server:
+  port: 4077
+spring:
+  datasource:
+    # ?????
+    ahutojforum:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/ahutojforum?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
+      username: root
+      password: cz2002610
+    # ?????
+    ahutoj:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://81.68.182.68:3306/ahutoj?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
+      username: AHUTOnlinejudge
+      password: 2019ahut
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
