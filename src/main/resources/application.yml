@@ -2,17 +2,31 @@ server:
   port: 4077
 spring:
   datasource:
-    # ?????
     ahutojforum:
       driver-class-name: com.mysql.cj.jdbc.Driver
       jdbc-url: jdbc:mysql://127.0.0.1:3306/ahutojforum?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
       username: root
       password: cz2002610
-    # ?????
     ahutoj:
       driver-class-name: com.mysql.cj.jdbc.Driver
+      #      jdbc-url: jdbc:mysql://127.0.0.1:3306/ahutoj?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
+      #      username: root
+      #      password: cz2002610
       jdbc-url: jdbc:mysql://81.68.182.68:3306/ahutoj?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
       username: AHUTOnlinejudge
       password: 2019ahut
+  redis:
+    port: 6379
+    host: 127.0.0.1
+    database: 0
+    timeout: 5000
+    jedis:
+      pool:
+        max-wait: 10000
+        max-idle: 200
+        min-idle: 0
+
 mybatis:
-  mapper-locations: classpath:mapper/*.xml
+  mapper-locations: classpath:com.ahutoj/mapper/*.xml
+logging:
+  config: classpath:log4j2.xml

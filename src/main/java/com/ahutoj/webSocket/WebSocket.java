@@ -1,7 +1,5 @@
 package com.ahutoj.webSocket;
 
-
-
 import org.springframework.stereotype.Controller;
 
 import javax.websocket.OnClose;
@@ -59,6 +57,7 @@ public class WebSocket {
         Session session = sessionPool.get(code);
         // System.out.println("单点消息  【websocket消息】 唯一标识" +code);
         // 在发送数据之前先确认 session是否已经打开 使用session.isOpen() 为true 则发送消息
+
         if (session != null && session.isOpen()) {
             try {
                 // System.out.println("单点消息  【websocket消息】广播消息:" + message);

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahutoj.mapper.ahutojForum.SolutionMapper">
+    <select id="getSolutionsByPID" resultType="com.ahutoj.bean.Solution">
+        select *
+        from solution
+        where PID = #{PID}
+        limit ${Begin},${Limit};
+    </select>
+
+    <insert id="addSolution">
+        insert into solution(SLTID, UID, PID, Content, UpdateTime)
+        values (null, #{UID}, #{PID}, #{Content}, #{UpdateTime})
+    </insert>
+
+    <update id="changeSolutionContent">
+        update solution
+        set Content    = #{Content},
+            UpdateTime = #{UpdateTime}
+        where SLTID = #{SLTID};
+    </update>
+</mapper>

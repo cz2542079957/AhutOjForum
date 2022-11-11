@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @MapperScan(
-        basePackages = {"com.ahutoj.mybatis.ahutojForum"},
+        basePackages = {"com.ahutoj.mapper.ahutojForum"},
         sqlSessionFactoryRef = "ahutojForumSqlSessionFactory",
         sqlSessionTemplateRef = "ahutojForumSqlSessionTemplate")
 public class AhutojForumDataSourceConfig

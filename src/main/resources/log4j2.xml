@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    status="warn" 日志框架本身的输出日志级别，可以修改为debug
+    monitorInterval="1800" 自动加载配置文件的间隔时间，不低于 1800秒；生产环境中修改配置文件，是热更新，无需重启应用
+ -->
+<Configuration status="WARN" monitorInterval="1800">
+    <!--
+      全局属性配置
+       使用时通过:${name}
+       -->
+    <properties>
+        <property name="LOG_HOME">./log</property>
+        <property name="REQUEST_FILE_NAME">request</property>
+        <property name="INFO_FILE_NAME">log-info</property>
+    </properties>
+
+    <!-- 日志处理 -->
+    <Appenders>
+        <!-- 控制台输出 appender，SYSTEM_OUT输出黑色，SYSTEM_ERR输出红色 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <RollingRandomAccessFile name="info-log"
+                                 fileName="${LOG_HOME}/${INFO_FILE_NAME}.log"
+                                 filePattern="${LOG_HOME}/$${date:yyyy-MM}/${INFO_FILE_NAME}-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout
+                    pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="200 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="200"/>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="request-log"
+                                 fileName="${LOG_HOME}/${REQUEST_FILE_NAME}.log"
+                                 filePattern="${LOG_HOME}/$${date:yyyy-MM}/${REQUEST_FILE_NAME}-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout
+                    pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="200 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="200"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <logger name="./log" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+</Configuration>
