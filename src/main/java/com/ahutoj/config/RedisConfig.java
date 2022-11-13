@@ -17,12 +17,15 @@ public class RedisConfig extends CachingConfigurerSupport
 
     @Value("${spring.redis.port}")
     private int port;
- 
+
     @Value("${spring.redis.jedis.pool.max-idle}")
     private int maxIdle;
 
     @Value("${spring.redis.jedis.pool.min-idle}")
     private int minIdle;
+
+    @Value("${spring.redis.jedis.pool.max-wait}")
+    private int maxWait;
 
     @Value("${spring.redis.timeout}")
     private int timeout;
@@ -33,6 +36,8 @@ public class RedisConfig extends CachingConfigurerSupport
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxIdle(maxIdle);
         jedisPoolConfig.setMinIdle(minIdle);
+        jedisPoolConfig.setMaxWaitMillis(maxWait);
+        jedisPoolConfig.setBlockWhenExhausted(false);
         JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, null);
         AhutOjForumApplication.log.info("JedisPool注入成功！！");
         AhutOjForumApplication.log.info("redis地址：" + host + ":" + port);

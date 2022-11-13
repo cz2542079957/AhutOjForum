@@ -1,8 +1,9 @@
 package com.ahutoj.service;
 
 import com.ahutoj.bean.Solution;
-import com.ahutoj.mapper.ahutojForum.SolutionMapper;
+import com.ahutoj.dao.ahutojForum.SolutionDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,28 +11,38 @@ import java.util.List;
 @Service
 public class SolutionService
 {
-    public SolutionMapper solutionMapper;
+    public SolutionDao solutionDao;
 
     @Autowired
-    public SolutionService(SolutionMapper solutionMapper)
+    public SolutionService(SolutionDao solutionDao)
     {
-        this.solutionMapper = solutionMapper;
+        this.solutionDao = solutionDao;
     }
 
-    public List<Solution> getSolutionsByPID(Integer PID, Integer Page, Integer Limit)
+    public List<Solution> getSolutions(Integer PID, String UID, Integer Page, Integer Limit)
     {
         Integer Begin = Page * Limit;
-        return solutionMapper.getSolutionsByPID(PID, Begin, Limit);
+        if (null == PID)
+        {
+            //todo
+        }
+        return solutionDao.getSolutions(PID, UID, Begin, Limit);
     }
 
-    public int addSolution(Integer PID, String UID, String Content)
+    public Integer addSolution(Integer PID, String UID, String Content)
     {
         long currentTime = System.currentTimeMillis();
-        return solutionMapper.addSolution(PID, UID, Content, currentTime);
+        return solutionDao.addSolution(PID, UID, Content, currentTime);
     }
 
-    public int changeSolutionContent(Integer ID, String Content, String UpdateTime)
+    public Integer changeSolutionContent(Integer ID, String Content, String UpdateTime)
     {
-        return solutionMapper.changeSolutionContent(ID, Content, UpdateTime);
+        return solutionDao.changeSolutionContent(ID, Content, UpdateTime);
     }
+
+    public Integer changeSolutionThumbUp(Integer SLTID, Integer Interval)
+    {
+        return solutionDao.changeSolutionThumbUp(SLTID, Interval);
+    }
+
 }

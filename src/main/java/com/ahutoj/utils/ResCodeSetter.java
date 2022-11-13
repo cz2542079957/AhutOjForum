@@ -10,13 +10,13 @@ public class ResCodeSetter
     public static void setResCode(Map<String, Object> ret, ResCode type)
     {
         ret.put("code", type.getCode());
-        ret.put("msg", type.getMsg());
+        ret.put("msg", type.getMsg() + type.getType());
     }
 
     public static void setResCode(Map<String, Object> ret, ResCode type, Object object)
     {
         ret.put("code", type.getCode());
-        ret.put("msg", type.getMsg());
+        ret.put("msg", type.getMsg() + type.getType());
         ret.put("data", object);
     }
 

@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class User implements Serializable
 {
     private String UID;
-    private String HeadUrl;
+    private String HeadURL;
     private String UserName;
     private String Pass;
     private String School;

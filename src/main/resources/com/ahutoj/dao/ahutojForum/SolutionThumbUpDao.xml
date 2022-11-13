@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahutoj.dao.ahutojForum.SolutionThumbUpDao">
+    <!--插入、存在则更新-->
+    <insert id="updateSolutionThumbUpState">
+        insert into solutionthumbup
+        values (#{SLTID}, #{UID}, #{State}, #{CreateTime})
+        on duplicate KEY update State      = #{State},
+                                CreateTime = #{CreateTime};
+    </insert>
+
+    <select id="getSolutionUserThumbUpState" resultType="_integer">
+        select count(*)
+        from solutionthumbup
+        where SLTID = #{SLTID}
+          and UID = #{UID}
+          and State = 1;
+    </select>
+</mapper>

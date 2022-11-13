@@ -16,31 +16,34 @@ import javax.sql.DataSource;
 
 @Configuration
 @MapperScan(
-        basePackages = {"com.ahutoj.mapper.ahutoj"},
-        sqlSessionFactoryRef = "ahutojSqlSessionFactory",
-        sqlSessionTemplateRef = "ahutojSqlSessionTemplate")
+        basePackages = {"com.ahutoj.dao.ahutoj"},
+        sqlSessionFactoryRef = "ahutojSqlSessionFactory")
 public class AhutojDataSourceConfig
 {
-    @Bean(name="ahutojDataSource")
-    @ConfigurationProperties(prefix="spring.datasource.ahutoj")
-    public DataSource ahutojDataSource() {
+    @Bean(name = "ahutojDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.ahutoj")
+    public DataSource ahutojDataSource()
+    {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean(name="ahutojSqlSessionFactory")
-    public SqlSessionFactory ahutojSqlSessionFactory(@Qualifier("ahutojDataSource") DataSource dataSource) throws Exception {
-        SqlSessionFactoryBean bean=new SqlSessionFactoryBean();
+    @Bean(name = "ahutojSqlSessionFactory")
+    public SqlSessionFactory ahutojSqlSessionFactory(@Qualifier("ahutojDataSource") DataSource dataSource) throws Exception
+    {
+        SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(dataSource);
         return bean.getObject();
     }
 
-    @Bean(name="ahutojTransactionManager")
-    public DataSourceTransactionManager ahutojTransactionManager(@Qualifier("ahutojDataSource") DataSource dataSource) {
+    @Bean(name = "ahutojTransactionManager")
+    public DataSourceTransactionManager ahutojTransactionManager(@Qualifier("ahutojDataSource") DataSource dataSource)
+    {
         return new DataSourceTransactionManager(dataSource);
     }
 
-    @Bean(name="ahutojSqlSessionTemplate")
-    public SqlSessionTemplate ahutojSqlSessionTemplate(@Qualifier("ahutojSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
+    @Bean(name = "ahutojSqlSessionTemplate")
+    public SqlSessionTemplate ahutojSqlSessionTemplate(@Qualifier("ahutojSqlSessionFactory") SqlSessionFactory sqlSessionFactory)
+    {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 }

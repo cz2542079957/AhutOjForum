@@ -22,11 +22,17 @@ spring:
     timeout: 5000
     jedis:
       pool:
-        max-wait: 10000
-        max-idle: 200
-        min-idle: 0
+        max-wait: 1000
+        max-idle: 300
+        min-idle: 10
+        max-active: 100
+  output:
+    ansi:
+      enabled: always
 
 mybatis:
-  mapper-locations: classpath:com.ahutoj/mapper/*.xml
+  mapper-locations: classpath:com.ahutoj/dao/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
 logging:
   config: classpath:log4j2.xml

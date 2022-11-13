@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class RedisBaseDao
 {
+    public static String AstrictUserChangeThumbUpState = "AstrictUserChangeThumbUpState";
+    public static String User = "User";
 
-    JedisUtil jedisUtil;
+    public JedisUtil jedisUtil;
 
     @Autowired
     public RedisBaseDao(JedisUtil jedisUtil)
