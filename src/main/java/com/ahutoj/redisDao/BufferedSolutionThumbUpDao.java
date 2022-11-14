@@ -1,6 +1,8 @@
 package com.ahutoj.redisDao;
 
+import com.ahutoj.config.ServerRuleConfig;
 import com.ahutoj.utils.JedisUtil;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -8,10 +10,9 @@ import org.springframework.stereotype.Component;
 public class BufferedSolutionThumbUpDao extends RedisBaseDao
 {
 
-    @Autowired
-    public BufferedSolutionThumbUpDao(JedisUtil jedisUtil)
+    public BufferedSolutionThumbUpDao(JedisUtil jedisUtil, ServerRuleConfig serverRuleConfig, Gson gson)
     {
-        super(jedisUtil);
+        super(jedisUtil, serverRuleConfig, gson);
     }
 
     /**
@@ -32,7 +33,8 @@ public class BufferedSolutionThumbUpDao extends RedisBaseDao
      **/
     public void setAstrictUserChangeThumbUpState(String UID)
     {
+
         //两秒可以操作一次
-        jedisUtil.setHashValueWithExpiration(AstrictUserChangeThumbUpState, UID, "1", 2);
+        jedisUtil.setHashValueWithExpiration(AstrictUserChangeThumbUpState, UID, "1", serverRuleConfig.ASTRICT_USER_THUMBSUP_SOLUTION_TIME);
     }
 }

@@ -6,17 +6,15 @@ import com.ahutoj.redisDao.BufferedSolutionThumbUpDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.rmi.server.UID;
-
 @Service
-public class SolutionThumbUpService
+public class SolutionThumbUpsService
 {
     private SolutionThumbUpDao solutionThumbUpDao;
     private SolutionDao solutionDao;
     private BufferedSolutionThumbUpDao bufferedSolutionThumbUpDao;
 
     @Autowired
-    public SolutionThumbUpService(SolutionThumbUpDao solutionThumbUpDao, SolutionDao solutionDao, BufferedSolutionThumbUpDao bufferedSolutionThumbUpDao)
+    public SolutionThumbUpsService(SolutionThumbUpDao solutionThumbUpDao, SolutionDao solutionDao, BufferedSolutionThumbUpDao bufferedSolutionThumbUpDao)
     {
         this.solutionThumbUpDao = solutionThumbUpDao;
         this.solutionDao = solutionDao;
@@ -62,7 +60,6 @@ public class SolutionThumbUpService
     {
         Integer IThumbUp = solutionThumbUpDao.getSolutionUserThumbUpState(SLTID, UID);
         //不存在就是未点赞
-        System.out.println(SLTID + " " + UID + " " + IThumbUp);
         if (IThumbUp == 0)
             IThumbUp = -1;
         return IThumbUp;

@@ -3,5 +3,16 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ahutoj.dao.ahutojForum.SolutionCommentDao">
+    <select id="getCommentBySLTID" resultType="com.ahutoj.bean.SolutionComment">
+        select *
+        from solutionComment
+        where SLTID = #{SLTID}
+        limit #{Begin} ,#{Limit};
+    </select>
 
+    <select id="getCommentCountBySLTID" resultType="_integer">
+        select count(*)
+        from solutioncomment
+        where SLTID = #{SLTID};
+    </select>
 </mapper>

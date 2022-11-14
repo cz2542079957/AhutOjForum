@@ -1,26 +1,22 @@
 package com.ahutoj.redisDao;
 
 import com.ahutoj.bean.User;
+import com.ahutoj.config.ServerRuleConfig;
 import com.ahutoj.utils.JedisUtil;
 import com.google.gson.Gson;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BufferedUserDao extends RedisBaseDao
 {
-    private Gson gson;
-
-    @Autowired
-    public BufferedUserDao(JedisUtil jedisUtil, Gson gson)
+    public BufferedUserDao(JedisUtil jedisUtil, ServerRuleConfig serverRuleConfig, Gson gson)
     {
-        super(jedisUtil);
-        this.gson = gson;
+        super(jedisUtil, serverRuleConfig, gson);
     }
 
     public User getUserInfoByUID(String UID)
     {
-        return gson.fromJson(jedisUtil.getHashValueCheckExpiration("User", UID), User.class);
+        return gson.fromJson(jedisUtil.getHashValueCheckExpiration(User, UID), User.class);
     }
 
     //缓存数据
@@ -28,7 +24,7 @@ public class BufferedUserDao extends RedisBaseDao
     {
         if (null != user)
         {
-            jedisUtil.setHashValueWithExpiration("User", user.getUID(), user);
+            jedisUtil.setHashValueWithExpiration(User, user.getUID(), user);
         }
     }
 }

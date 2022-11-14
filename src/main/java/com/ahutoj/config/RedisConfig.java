@@ -30,6 +30,9 @@ public class RedisConfig extends CachingConfigurerSupport
     @Value("${spring.redis.timeout}")
     private int timeout;
 
+    @Value("${spring.redis.password}")
+    private String password;
+
     @Bean("JedisPool")
     public JedisPool redisPoolFactory()
     {
@@ -38,7 +41,7 @@ public class RedisConfig extends CachingConfigurerSupport
         jedisPoolConfig.setMinIdle(minIdle);
         jedisPoolConfig.setMaxWaitMillis(maxWait);
         jedisPoolConfig.setBlockWhenExhausted(false);
-        JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, null);
+        JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password);
         AhutOjForumApplication.log.info("JedisPool注入成功！！");
         AhutOjForumApplication.log.info("redis地址：" + host + ":" + port);
         return jedisPool;

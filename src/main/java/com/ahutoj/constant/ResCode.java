@@ -16,6 +16,7 @@ public enum ResCode
 
     //题解接口 31
     PublishSolutionError(310101, "非常抱歉，发布题解失败，可能出现了一些异常", ResCodeType.error),
+    AstrictUserPublishSolution(310102, "请等待片刻再发布题解", ResCodeType.warning),
 
     AstrictUserChangeThumbUpState(310601, "你操作太频繁了~", ResCodeType.warning);
 
@@ -35,8 +36,8 @@ public enum ResCode
 class ResCodeType
 {
     public static String empty = "";
-    public static String success = "\\\\success";
-    public static String info = "\\\\info";
-    public static String warning = "\\\\warning";
-    public static String error = "\\\\error";
+    public static String success = "\\success";
+    public static String info = "\\info";
+    public static String warning = "\\warning";
+    public static String error = "\\error";
 }

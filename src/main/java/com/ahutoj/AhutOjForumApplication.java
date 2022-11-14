@@ -16,10 +16,11 @@ public class AhutOjForumApplication
 {
     public static ConfigurableApplicationContext ac;
     public static final Logger log = LogManager.getLogger(AhutOjForumApplication.class);
-
+    
     //启动类
     public static void main(String[] args)
     {
         ac = SpringApplication.run(AhutOjForumApplication.class, args);
+
     }
 }

@@ -1,11 +1,15 @@
 package com.ahutoj.controller;
 
+import com.ahutoj.AhutOjForumApplication;
 import com.ahutoj.bean.Solution;
+import com.ahutoj.bean.SolutionComment;
 import com.ahutoj.bean.User;
 import com.ahutoj.constant.ResCode;
+import com.ahutoj.dao.ahutojForum.SolutionCommentDao;
 import com.ahutoj.exception.InvalidParamException;
+import com.ahutoj.service.SolutionCommentService;
 import com.ahutoj.service.SolutionService;
-import com.ahutoj.service.SolutionThumbUpService;
+import com.ahutoj.service.SolutionThumbUpsService;
 import com.ahutoj.service.UserService;
 import com.ahutoj.utils.MoreTransaction;
 import com.ahutoj.utils.ParamCheckUtil;
@@ -14,6 +18,7 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,23 +29,29 @@ import java.util.Map;
 public class SolutionController
 {
     private final SolutionService solutionService;
-    private final SolutionThumbUpService solutionThumbUpService;
+    private final SolutionThumbUpsService solutionThumbUpsService;
+    private final SolutionCommentService solutionCommentService;
     private final UserService userService;
 
     private final Gson gson;
 
     @Autowired
-    public SolutionController(SolutionService solutionService, UserService userService, SolutionThumbUpService solutionThumbUpService, Gson gson)
+    public SolutionController(SolutionService solutionService, UserService userService, SolutionThumbUpsService solutionThumbUpsService, SolutionCommentService solutionCommentService, Gson gson)
     {
         this.solutionService = solutionService;
         this.userService = userService;
-        this.solutionThumbUpService = solutionThumbUpService;
+        this.solutionThumbUpsService = solutionThumbUpsService;
+        this.solutionCommentService = solutionCommentService;
         this.gson = gson;
     }
 
+    /**
+     * @Description 创建题解（根据题目id、UID、内容Content）
+     * @Params [PID, req]
+     **/
     @PostMapping("/add/{PID}")
     @MoreTransaction(value = {"ahutojForumTransactionManager"})
-    public Map<String, Object> publishSolution(@PathVariable("PID") Integer PID, @RequestBody Map<String, Object> req)
+    public Map<String, Object> publishSolution(@PathVariable("PID") String PID, @RequestBody Map<String, Object> req)
     {
         if (!req.containsKey("UID") || !req.containsKey("Content"))
         {
@@ -50,12 +61,17 @@ public class SolutionController
         String Content = (String) req.get("Content");
         Map<String, Object> ret = new HashMap<>();
         Integer res = solutionService.addSolution(PID, UID, Content);
-        if (res <= 0)
+        if (res == 0)
         {
             ResCodeSetter.setResCode(ret, ResCode.PublishSolutionError);
             return ret;
         }
-        ret.put("data", req);
+        if (res == -1)
+        {
+            ResCodeSetter.setResCode(ret, ResCode.AstrictUserPublishSolution);
+            return ret;
+        }
+        ResCodeSetter.setResCode(ret, ResCode.success);
         return ret;
     }
 
@@ -80,36 +96,44 @@ public class SolutionController
      * @Params [PID 题目id, UID 用户ID, Page 页面, Limit 页面展示数量]
      **/
     @GetMapping("/list/pid/{PID}")
-    public Map<String, Object> getSolutionsByPID(@PathVariable("PID") Integer PID, String UID, Integer Page, Integer Limit)
+    public Map<String, Object> getSolutionsByPID(@PathVariable("PID") String PID, String UID, Integer Page, Integer Limit)
     {
+        //PID用来获取列表，UID用来获取请求人是否点赞该题解
         Map<String, Object> ret = new HashMap<>();
-        //获取solution列表再根据UID获取获取用户信息
-        if (null == PID && null == UID)
-            throw new InvalidParamException();
-        //页面从0开始
-        if (null == Page)
-        {
-            Page = 0;
-        }
-        if (null == Limit)
-        {
-            Limit = 10;
-        }
-        List<Solution> solutionList = solutionService.getSolutions(PID, UID, Page, Limit);
+        //PID一定不能为空
+        ParamCheckUtil.notNull(PID);
+        //页面index从0开始
+        Page = null == Page ? 0 : Page;
+        Limit = null == Limit ? 10 : Limit;
+        //获取solution单页列表
+        List<Solution> solutionList = solutionService.getSolutions(PID, null, Page, Limit, 1);
         List<Map<String, Object>> data = new LinkedList<>();
+        //获取总数
+        Integer Count = solutionService.getSolutionsCountByPID(PID, 1);
+        ret.put("Count", Count);
         for (Solution solution : solutionList)
         {
             //获取用户信息
             User user = userService.getUserInfoByUID(solution.getUID());
             //获取本用户点赞情况
-            Integer IThumbUp = solutionThumbUpService.getSolutionUserThumbUpState(solution.getSLTID(), UID);
+            Integer IThumbUp = solutionThumbUpsService.getSolutionUserThumbUpState(solution.getSLTID(), UID);
             Map<String, Object> temp = new HashMap<>();
             temp.putAll(gson.fromJson(gson.toJson(solution), Map.class));
-            temp.putAll(gson.fromJson(gson.toJson(user), Map.class));
-            temp.put("IThumbUp", IThumbUp);
+            if (null != user)
+            {
+                temp.putAll(gson.fromJson(gson.toJson(user), Map.class));
+            }
+            else
+            {
+                System.out.println(solution.toString());
+                AhutOjForumApplication.log.warn("出现空User对象");
+                continue;
+            }
+            temp.put("IThumbsUp", IThumbUp);
             data.add(temp);
         }
-        ResCodeSetter.setResCode(ret, ResCode.success, data);
+        ret.put("data", data);
+        ResCodeSetter.setResCode(ret, ResCode.success);
         return ret;
     }
 
@@ -132,6 +156,10 @@ public class SolutionController
         return ret;
     }
 
+    /**
+     * @Description 修改用户点赞题解状态（根据题解id、UID、State）
+     * @Params [SLTID, req]
+     **/
     @PostMapping("/thumbup/{SLTID}")
     @MoreTransaction(value = {"ahutojForumTransactionManager"})
     public Map<String, Object> changeThumbUpState(@PathVariable("SLTID") Integer SLTID, @RequestBody Map<String, Object> req)
@@ -147,7 +175,7 @@ public class SolutionController
         ParamCheckUtil.notNull(SLTID);
         ParamCheckUtil.stringNotEmpty(UID);
         ParamCheckUtil.notNull(State);
-        Integer res = solutionThumbUpService.updateSolutionThumbUpState(SLTID, UID, State);
+        Integer res = solutionThumbUpsService.updateSolutionThumbUpState(SLTID, UID, State);
         if (res == 0)
         {
             //说明被限制
@@ -158,6 +186,42 @@ public class SolutionController
         return ret;
     }
 
+    /**
+     * @Description 获取题解的评论（根据题解id、页面号、单页数量）
+     * @Params [SLTID, Page, Limit]
+     **/
+    @GetMapping("/comment/{SLTID}")
+    public Map<String, Object> getSolutionComment(@PathVariable("SLTID") Integer SLTID, Integer Page, Integer Limit)
+    {
+        Map<String, Object> ret = new HashMap<>();
+        ParamCheckUtil.notNull(SLTID);
+        Page = null == Page ? 0 : Page;
+        Limit = null == Limit ? 0 : Limit;
+        //获取总数
+        Integer Count = solutionCommentService.getCommentCountBySLTID(SLTID);
+        ret.put("Count", Count);
+        //获取评论列表
+        List<SolutionComment> list = solutionCommentService.getCommentsBySLTID(SLTID, Page, Limit);
+        List<Map<String, Object>> compositeList = new LinkedList<>();   //拼接对象列表
+        for (SolutionComment temp : list)
+        {
+            User user = userService.getUserInfoByUID(temp.getUID());
+            Map<String, Object> tempObject = new HashMap<>(gson.fromJson(gson.toJson(temp), Map.class));
+            if (null != user)
+            {
+                tempObject.putAll(gson.fromJson(gson.toJson(user), Map.class));
+            }
+            else
+            {
+                AhutOjForumApplication.log.warn("USER信息获取失败");
+                continue;
+            }
+            compositeList.add(tempObject);
+        }
+        ret.put("data", compositeList);
+        ResCodeSetter.setResCode(ret, ResCode.success);
+        return ret;
+    }
 
     //todo 修改题解内容
 

@@ -9,9 +9,12 @@ import java.util.List;
 @Mapper
 public interface SolutionDao
 {
-    List<Solution> getSolutions(@Param("PID") Integer PID, @Param("UID") String UID, @Param("Begin") Integer Begin, @Param("Limit") Integer Limit);
 
-    Integer addSolution(@Param("PID") Integer PID, @Param("UID") String UID, @Param("Content") String Content, @Param("UpdateTime") long UpdateTime);
+    Integer addSolution(@Param("PID") String PID, @Param("UID") String UID, @Param("Content") String Content, @Param("UpdateTime") long UpdateTime);
+
+    List<Solution> getSolutions(@Param("PID") String PID, @Param("UID") String UID, @Param("Begin") Integer Begin, @Param("Limit") Integer Limit, @Param("State") Integer State);
+
+    Integer getSolutionsCountByPID(@Param("PID") String PID, @Param("State") Integer State);
 
     Integer changeSolutionContent(@Param("SLTID") Integer SLTID, @Param("Content") String Content, @Param("UpdateTime") String UpdateTime);
 

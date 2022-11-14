@@ -13,8 +13,24 @@
             <if test="UID != null and UID !=''">
                 UID = #{UID} and
             </if>
+            <if test="State != null">
+                State = #{State} and
+            </if>
         </trim>
         limit ${Begin},${Limit};
+    </select>
+
+    <select id="getSolutionsCountByPID" resultType="_integer">
+        select count(*)
+        from solution
+        <trim prefix="where" suffixOverrides="and|or">
+            <if test="PID != null and PID !=''">
+                PID = #{PID} and
+            </if>
+            <if test="State != null">
+                State = #{State} and
+            </if>
+        </trim>
     </select>
 
     <insert id="addSolution">

@@ -16,7 +16,7 @@ public class Solution implements Serializable
 
     private String UID;
 
-    private int PID;
+    private String PID;
 
     private String Content;
 
@@ -27,4 +27,6 @@ public class Solution implements Serializable
     private long UpdateTime;
 
     private int CommentCount;
+
+    private int State;
 }
