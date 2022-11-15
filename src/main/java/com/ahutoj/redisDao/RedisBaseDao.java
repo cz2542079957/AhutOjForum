@@ -11,6 +11,7 @@ public abstract class RedisBaseDao
 {
     public static String AstrictUserPublishSolution = "AstrictUserPublishSolution";
     public static String AstrictUserChangeThumbUpState = "AstrictUserChangeThumbUpState";
+    public static String AstrictUserPublishSolutionComment = "AstrictUserPublishSolutionComment";
     public static String User = "User";
 
     public JedisUtil jedisUtil;

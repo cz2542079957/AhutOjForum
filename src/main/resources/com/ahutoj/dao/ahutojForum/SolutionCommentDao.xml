@@ -3,6 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ahutoj.dao.ahutojForum.SolutionCommentDao">
+    <insert id="addSolutionComment">
+        insert into solutioncomment(SLTID, UID, Content, CreateTime)
+        values (#{SLTID}, #{UID}, #{Content}, #{CreateTime});
+    </insert>
+
     <select id="getCommentBySLTID" resultType="com.ahutoj.bean.SolutionComment">
         select *
         from solutionComment
@@ -15,4 +20,18 @@
         from solutioncomment
         where SLTID = #{SLTID};
     </select>
+
+
+    <update id="changeSolutionCommentCount">
+        update solution
+        set CommentCount = CommentCount + #{Interval}
+        where SLTID = #{SLTID};
+    </update>
+
+    <delete id="deleteSolutionComment">
+        delete
+        from solutioncomment
+        where SLTCMTID = #{SLTCMTID}
+          and UID = #{UID};
+    </delete>
 </mapper>

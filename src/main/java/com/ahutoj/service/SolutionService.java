@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.awt.image.ShortLookupTable;
 import java.util.List;
+import java.util.ServiceLoader;
 
 @Service
 public class SolutionService
@@ -38,6 +40,11 @@ public class SolutionService
         bufferedSolutionDao.setAstrictUserPublishSolution(UID); //添加限制
         long currentTime = System.currentTimeMillis();
         return solutionDao.addSolution(PID, UID, Content, currentTime);
+    }
+
+    public Integer deleteSolution(Integer SLTID)
+    {
+        return solutionDao.deleteSolution(SLTID);
     }
 
     /**
@@ -90,6 +97,12 @@ public class SolutionService
     public Integer changeSolutionThumbUp(Integer SLTID, Integer Interval)
     {
         return solutionDao.changeSolutionThumbUp(SLTID, Interval);
+    }
+
+
+    public Integer changeSolutionState(Integer SLTID, Integer State)
+    {
+        return solutionDao.changeSolutionState(SLTID, State);
     }
 
 }

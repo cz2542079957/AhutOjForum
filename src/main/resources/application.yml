@@ -26,6 +26,7 @@ spring:
         max-idle: 300
         min-idle: 10
         max-active: 100
+    password: ahutoj4077
   output:
     ansi:
       enabled: always

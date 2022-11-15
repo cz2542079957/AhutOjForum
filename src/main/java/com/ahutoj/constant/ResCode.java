@@ -17,8 +17,13 @@ public enum ResCode
     //题解接口 31
     PublishSolutionError(310101, "非常抱歉，发布题解失败，可能出现了一些异常", ResCodeType.error),
     AstrictUserPublishSolution(310102, "请等待片刻再发布题解", ResCodeType.warning),
+    VerifySolutionError(310103, "审核失败，数据异常！", ResCodeType.error),
 
-    AstrictUserChangeThumbUpState(310601, "你操作太频繁了~", ResCodeType.warning);
+    AstrictUserChangeThumbUpState(310201, "你操作太频繁了~", ResCodeType.warning),
+
+    AddSolutionCommentError(310301, "评论失败，数据异常！", ResCodeType.error),
+    AstrictUserPublishSolutionComment(310302, "你的评论太频繁，等一会再评论吧", ResCodeType.warning),
+    DeleteSolutionCommentError(310303, "删除评论失败，请重试。", ResCodeType.error);
 
 
     @Setter

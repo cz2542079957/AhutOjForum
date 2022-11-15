@@ -5,7 +5,6 @@ import com.ahutoj.bean.Solution;
 import com.ahutoj.bean.SolutionComment;
 import com.ahutoj.bean.User;
 import com.ahutoj.constant.ResCode;
-import com.ahutoj.dao.ahutojForum.SolutionCommentDao;
 import com.ahutoj.exception.InvalidParamException;
 import com.ahutoj.service.SolutionCommentService;
 import com.ahutoj.service.SolutionService;
@@ -18,7 +17,7 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Type;
+import java.rmi.server.UID;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -187,6 +186,63 @@ public class SolutionController
     }
 
     /**
+     * @Description 添加题解评论
+     * @Params [SLTID, req]
+     **/
+    @PostMapping("/comment/add/{SLTID}")
+    @MoreTransaction(value = {"ahutojForumTransactionManager"})
+    public Map<String, Object> addSolutionComment(@PathVariable("SLTID") Integer SLTID, @RequestBody Map<String, Object> req)
+    {
+        Map<String, Object> ret = new HashMap<>();
+        if (!req.containsKey("UID") || !req.containsKey("Content"))
+        {
+            throw new InvalidParamException();
+        }
+        String UID = (String) req.get("UID");
+        String Content = (String) req.get("Content");
+        Integer res = solutionCommentService.addSolutionComment(SLTID, UID, Content);
+        if (res == 1)
+        {
+            ResCodeSetter.setResCode(ret, ResCode.success);
+            return ret;
+        }
+        else if (res == -1)
+        {
+            ResCodeSetter.setResCode(ret, ResCode.AstrictUserPublishSolutionComment);
+            return ret;
+        }
+        else
+        {
+            AhutOjForumApplication.log.error("添加题解评论失败");
+            ResCodeSetter.setResCode(ret, ResCode.AddSolutionCommentError);
+            return ret;
+        }
+    }
+
+    @DeleteMapping("/comment/delete/{SLTCMTID}")
+    @MoreTransaction(value = {"ahutojForumTransactionManager"})
+    public Map<String, Object> deleteSolutionComment(@PathVariable("SLTCMTID") Integer SLTCMTID, @RequestBody Map<String, Object> req)
+    {
+        if (!req.containsKey("UID") || !req.containsKey("SLTID"))
+        {
+            throw new InvalidParamException();
+        }
+        String UID = (String) req.get("UID");
+        Integer SLTID = (Integer) req.get("SLTID");
+        Integer res = solutionCommentService.deleteSolutionComment(SLTCMTID, SLTID, UID);
+        Map<String, Object> ret = new HashMap<>();
+        if (res == 0)
+        {
+            ResCodeSetter.setResCode(ret, ResCode.DeleteSolutionCommentError);
+        }
+        else
+        {
+            ResCodeSetter.setResCode(ret, ResCode.success);
+        }
+        return ret;
+    }
+
+    /**
      * @Description 获取题解的评论（根据题解id、页面号、单页数量）
      * @Params [SLTID, Page, Limit]
      **/
@@ -223,9 +279,36 @@ public class SolutionController
         return ret;
     }
 
-    //todo 修改题解内容
+    /**
+     * @Description
+     * @Params []
+     **/
+    @GetMapping("/")
+    public Map<String, Object> updateSolutionContent()
+    {
+        Map<String, Object> ret = new HashMap<>();
+        return ret;
+    }
 
-
-    //todo 审核通过
-
+    /**
+     * @Description 审核通过题解
+     * @Params [SLTID]
+     **/
+    @PostMapping("/verify/{SLTID}")
+    public Map<String, Object> verifiedSolution(@PathVariable("SLTID") Integer SLTID)
+    {
+        Map<String, Object> ret = new HashMap<>();
+        Integer res = solutionService.changeSolutionState(SLTID, 1);
+        if (res == 1)
+        {
+            ResCodeSetter.setResCode(ret, ResCode.success);
+            return ret;
+        }
+        else
+        {
+            AhutOjForumApplication.log.error("审核题解出错，修改题解状态失败");
+            ResCodeSetter.setResCode(ret, ResCode.VerifySolutionError);
+            return ret;
+        }
+    }
 }

@@ -20,6 +20,12 @@
         limit ${Begin},${Limit};
     </select>
 
+    <delete id="deleteSolution">
+        delete
+        from solution
+        where SLTID = #{SLTID};
+    </delete>
+
     <select id="getSolutionsCountByPID" resultType="_integer">
         select count(*)
         from solution
@@ -49,5 +55,10 @@
         update solution
         set ThumbsUp = ThumbsUp + #{Interval}
         where SLTID = #{SLTID};
+    </update>
+
+    <update id="changeSolutionState">
+        update solution
+        set State = #{State}
     </update>
 </mapper>
